@@ -1,0 +1,8 @@
+{
+  "registered_plugins": [
+    "Weather",
+    "Clock",
+    "Calendar",
+    "Image"
+  ]
+}

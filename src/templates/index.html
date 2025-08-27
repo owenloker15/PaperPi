@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plugin Selector</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='style/style.css')}}">
+  <!-- Using Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div>
+    <h1>Welcome to PaperPi!</h1>
+    <h2>Select a plugin to get started!</h2>
+  </div>
+  <div class="plugin-grid">
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin A</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin B</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin C</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin D</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin E</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+    <div class="plugin-card">
+      <p class="plugin-name">Plugin F</p>
+      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
+    </div>
+  </div>
+
+</body>
+</html>
