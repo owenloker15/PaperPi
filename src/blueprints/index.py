@@ -4,4 +4,5 @@ main_bp = Blueprint("main", __name__)
 
 @main_bp.route('/')
 def index():
-    return render_template("index.html")
+    registered_plugins = current_app.config["REGISTERED_PLUGINS"]
+    return render_template("index.html", plugins=registered_plugins)

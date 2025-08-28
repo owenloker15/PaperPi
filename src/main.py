@@ -3,15 +3,14 @@ import os
 from flask import Flask
 from blueprints.index import main_bp
 
-app = Flask(__name__)
-
-
 json_config = os.path.join(os.path.dirname(__file__), "config", "config.json")
+
+app = Flask(__name__)
 
 def read_json_config():
     with open(json_config, "r") as file:
         data = json.load(file)
-        print(data["registered_plugins"])
+        app.config["REGISTERED_PLUGINS"] = data["registered_plugins"]
 
 def register_blueprints():
     app.register_blueprint(main_bp)

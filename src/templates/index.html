@@ -14,30 +14,12 @@
     <h2>Select a plugin to get started!</h2>
   </div>
   <div class="plugin-grid">
+    {% for plugin in plugins %}
     <div class="plugin-card">
-      <p class="plugin-name">Plugin A</p>
+      <p class="plugin-name">{{plugin}}</p>
       <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
     </div>
-    <div class="plugin-card">
-      <p class="plugin-name">Plugin B</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
-    <div class="plugin-card">
-      <p class="plugin-name">Plugin C</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
-    <div class="plugin-card">
-      <p class="plugin-name">Plugin D</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
-    <div class="plugin-card">
-      <p class="plugin-name">Plugin E</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
-    <div class="plugin-card">
-      <p class="plugin-name">Plugin F</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
+    {% endfor %}
   </div>
 
 </body>
