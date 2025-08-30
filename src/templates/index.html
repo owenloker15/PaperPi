@@ -8,6 +8,15 @@
   <!-- Using Font Awesome for icons -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
+<<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const plugin_cards = document.getElementsByClassName("plugin-card");
+    plugin_cards.forEach(element => {
+  element.addEventListener('click', () => {
+    let url = ''
+  });
+  }
+</script>
 <body>
   <div>
     <h1>Welcome to PaperPi!</h1>
@@ -15,8 +24,8 @@
   </div>
   <div class="plugin-grid">
     {% for plugin in plugins %}
-    <div class="plugin-card">
-      <p class="plugin-name">{{plugin}}</p>
+    <div class="plugin-card" onclick="">
+      <p class="plugin-name">{{plugin.name}}</p>
       <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
     </div>
     {% endfor %}
