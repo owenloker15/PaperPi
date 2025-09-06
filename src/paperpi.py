@@ -1,7 +1,7 @@
 import json
 import os
 from flask import Flask
-from jinja2 import ChoiceLoader, FileSystemLoader
+from jinja2 import ChoiceLoader, Environment, FileSystemLoader
 from blueprints.index import main_bp
 from blueprints.plugin import plugin_bp
 from configuration import Configuration
@@ -18,8 +18,7 @@ template_dirs = [
    os.path.join(os.path.dirname(__file__), "templates"),    # Default template folder
    os.path.join(os.path.dirname(__file__), "plugins"),      # Plugin templates
 ]
-
-app.jinja_loader = ChoiceLoader([FileSystemLoader(template_dirs + os.listdir(directory)) for directory in template_dirs])
+app.jinja_loader = ChoiceLoader([FileSystemLoader(directory) for directory in template_dirs])
 
 def register_blueprints():
     app.register_blueprint(main_bp)

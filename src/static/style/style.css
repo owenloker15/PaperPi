@@ -51,8 +51,7 @@ body {
   font-size: 1.1em;
 }
 
-.plugin-icon {
-  max-width: 64px;
-  max-height: 64px;
-  margin-bottom: 10px;
+.plugin-card img {
+  width: 10%;
+  height: auto;
 }

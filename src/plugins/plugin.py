@@ -19,7 +19,6 @@ class Plugin():
 
     def get_template(self):
         template_file = os.path.join(self.directory, "settings.html")
-        print(template_file)
         if os.path.isfile(template_file) :
             return template_file
         return "BAAAD"
