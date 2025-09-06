@@ -1,7 +1,5 @@
 from flask import render_template, send_from_directory, Blueprint, current_app
 
-from config.configuration import Configuration
-
 plugin_bp = Blueprint("plugin", __name__)
     
 @plugin_bp.route('/plugin/<plugin_name>')

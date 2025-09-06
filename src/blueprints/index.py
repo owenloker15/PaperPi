@@ -5,5 +5,6 @@ main_bp = Blueprint("main", __name__)
 @main_bp.route('/')
 def index():
     app_config = current_app.config["Configuration"]
-    return render_template("index.html", plugins=app_config.get_plugins())
+    print(app_config.get_plugin_configs())
+    return render_template("index.html", plugins=app_config.get_plugin_configs())
     

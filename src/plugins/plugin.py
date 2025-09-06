@@ -3,9 +3,13 @@ import os
 PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class Plugin():
-    def __init__(self, name) -> None:
+    def __init__(self, id, name):
+        self.id = id
         self.name = name
-        self.directory = os.path.join(PLUGIN_DIR, self.name.lower())
+        self.directory = os.path.join(PLUGIN_DIR, self.id)
+
+    def get_id(self):
+        return self.id
 
     def get_name(self):
         return self.name
