@@ -1,11 +1,9 @@
-from flask import render_template, Blueprint
-
-from config.configuration import get_configuration_helper
+from flask import render_template, Blueprint, current_app
 
 main_bp = Blueprint("main", __name__)
 
 @main_bp.route('/')
 def index():
-    configuration = get_configuration_helper()
-    return render_template("index.html", plugins=configuration.get_plugins())
+    app_config = current_app.config["Configuration"]
+    return render_template("index.html", plugins=app_config.get_plugins())
     

@@ -1,7 +1,6 @@
 from flask import current_app
 
-def get_configuration_helper():
-    return current_app.config["Configuration"]
+from plugins.plugin import Plugin
 
 class Configuration():
     def __init__(self):
@@ -13,9 +12,8 @@ class Configuration():
     def get_plugins(self):
         return self.plugins
 
-    def get_plugin_by_name(self, name):
+    def get_plugin_by_name(self, name) -> Plugin:
         for plugin in self.plugins:
             if plugin.name == name:
                 return plugin
         return {}
-

@@ -1,13 +1,18 @@
-from flask import render_template, Blueprint
+from flask import render_template, send_from_directory, Blueprint, current_app
 
-from config.configuration import get_configuration_helper
+from config.configuration import Configuration
 
 plugin_bp = Blueprint("plugin", __name__)
-
+    
 @plugin_bp.route('/plugin/<plugin_name>')
-def settings_page(plugin_name):   
-    configuration = get_configuration_helper()
-    plugin = configuration.get_plugin_by_name(plugin_name)
-    return render_template("plugin.html", plugin_template=plugin.get_template())
+def settings_page(plugin_name):
+    app_config = current_app.config["Configuration"]
+    plugin = app_config.get_plugin_by_name(plugin_name)
+    return render_template(plugin.get_template())
+    # return "Random string!"
 
-def image()
+@plugin_bp.route('/image/<plugin_name>')
+def icon(plugin_name):
+    app_config = current_app.config["Configuration"]
+    plugin = app_config.get_plugin_by_name(plugin_name)
+    return send_from_directory("icon.png")

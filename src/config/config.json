@@ -1,8 +1,20 @@
 {
   "registered_plugins": [
-    "Weather",
-    "Clock",
-    "Calendar",
-    "Image"
+    {
+      "id" : "weather",
+      "class" : "WeatherPlugin"
+    },
+    {
+      "id" : "clock",
+      "class" : "ClockPlugin"
+    },
+    {
+      "id" : "calendar",
+      "class" : "CalendarPlugin"
+    },
+    {
+      "id" : "image",
+      "class" : "ImagePlugin"
+    }
   ]
 }

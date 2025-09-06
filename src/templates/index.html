@@ -1,35 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Plugin Selector</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='style/style.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
   <!-- Using Font Awesome for icons -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
-<<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const plugin_cards = document.getElementsByClassName("plugin-card");
-    plugin_cards.forEach(element => {
-  element.addEventListener('click', () => {
-    let url = ''
-  });
-  }
-</script>
+
 <body>
-  <div>
+  <header>
     <h1>Welcome to PaperPi!</h1>
     <h2>Select a plugin to get started!</h2>
-  </div>
-  <div class="plugin-grid">
+  </header>
+  <main class="plugin-grid">
     {% for plugin in plugins %}
-    <div class="plugin-card" onclick="">
-      <p class="plugin-name">{{plugin.name}}</p>
-      <img class="plugin-icon" src="{{url_for('static', filename='icons/calendar.png')}}" alt="">
-    </div>
+    <a class="plugin-card" href="{{ url_for('plugin.settings_page', plugin_name=plugin.name) }}">
+      {{ plugin.name }}
+      <img class="plugin-icon" src="{{ url_for('static', filename='icons/calendar.png') }}"
+        alt="{{ plugin.name }} icon">
+    </a>
     {% endfor %}
-  </div>
-
+  </main>
 </body>
+
 </html>

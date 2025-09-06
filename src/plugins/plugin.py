@@ -1,11 +1,11 @@
 import os
 
-plugin_dir = os.path.dirname(os.path.abspath(__file__))
+PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class Plugin():
     def __init__(self, name) -> None:
         self.name = name
-        self.directory = os.path.join(plugin_dir, self.name)
+        self.directory = os.path.join(PLUGIN_DIR, self.name.lower())
 
     def get_name(self):
         return self.name
@@ -14,4 +14,8 @@ class Plugin():
         return self.directory
 
     def get_template(self):
-        return self.get_name
+        template_file = os.path.join(self.directory, "settings.html")
+        print(template_file)
+        if os.path.isfile(template_file) :
+            return template_file
+        return "BAAAD"
