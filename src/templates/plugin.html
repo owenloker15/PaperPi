@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <header>
+
+    </header>
+    <main>
+        <h1>{{plugin.name}}</h1>
+
+        <form id="settings-form">
+            {% include template %}
+        </form>
+        <button type="button" id="save-btn" class="submit-btn" onclick="saveClicked()">Save</button>
+    </main>
+</body>
+<script>
+    async function saveClicked() {
+        const settingsForm = document.getElementById("settings-form");
+        const formData = new FormData(settingsForm);
+        const data = Object.fromEntries(formData.entries());
+
+        let url = "{{ url_for('plugin.submit_data') }}";
+
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert('GOOD! ' + JSON.stringify(result));
+            } else {
+                alert('BAD! ' + JSON.stringify(result));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while processing your request.');
+        }
+    }
+
+</script>
+
+
+</html>

@@ -25,3 +25,6 @@ class Configuration:
 
     def get_plugin_configs(self):
         return self.plugin_configs
+    
+    def get_plugin_config(self, plugin_id):
+        return next((plugin for plugin in self.plugin_configs if plugin['id'] == plugin_id), None)

@@ -6,6 +6,7 @@ from blueprints.index import main_bp
 from blueprints.plugin import plugin_bp
 from configuration import Configuration
 from utils.plugin_utils import load_plugins
+from utils.task import BackgroundRefreshTask
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PLUGIN_DIR = os.path.join(BASE_DIR, "plugins")
@@ -25,6 +26,8 @@ def register_blueprints():
     app.register_blueprint(plugin_bp)
 
 def startup():
+    task = BackgroundRefreshTask("1", {})
+    task.start()
     load_plugins(app_config.get_plugin_configs())
     app.config["Configuration"] = app_config
     register_blueprints()
