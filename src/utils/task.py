@@ -1,6 +1,8 @@
 import threading
 import time
 
+from utils.plugin_utils import get_plugin_instance_by_id
+
 class ManualRefreshTask():
     def __init__(self, plugin_id, plugin_settings):
         self.plugin_id = plugin_id
@@ -10,8 +12,9 @@ class ManualRefreshTask():
         self.thread.start()
 
     def _run(self):
-        time.sleep(5)
-        print("HIIIIII")
+        print(self.plugin_settings)
+        plugin_instance = get_plugin_instance_by_id(self.plugin_id)
+        return plugin_instance.render_image(self.plugin_settings)
 
 
 class BackgroundRefreshTask():
