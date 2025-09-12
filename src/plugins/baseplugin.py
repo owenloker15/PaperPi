@@ -24,6 +24,6 @@ class BasePlugin():
 
         return "BAAAD"
 
-    def render_image(self, plugin_settings):
+    def render_image(self, plugin_settings, app):
         pass
     

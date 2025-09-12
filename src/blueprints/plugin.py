@@ -25,6 +25,11 @@ def icon(plugin_id):
 def submit_data(plugin_id):
     payload = request.get_json()
     print("Received JSON:", payload)
+    task_manager = current_app.config["Task_Manager"]
+    app_instance = current_app._get_current_object()
+
+    task = ManualRefreshTask(plugin_id, payload, app_instance)
+
+    task_manager.submit_task(ManualRefreshTask)
     
-    ManualRefreshTask(plugin_id, payload)
     return jsonify(success=True, received=payload)
