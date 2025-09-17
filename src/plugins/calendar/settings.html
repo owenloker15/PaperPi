@@ -1,8 +1,16 @@
-<div>
-<label for="calendarType"></label>
-<select name="calendarType" id="calendarType">
-  <option value="Day">Day</option>
-  <option value="Week">Week</option>
-  <option value="Month">Month</option>
-</select>
+<div class="calendear-settings-container">
+  <div class="calendars-list">
+    <p>Calendars:</p>
+    <div class="calendar-item">
+      <input type="color" name="calendarColor" id="calendar-color">
+      <input type="text" name="calendarUrl" id="calendar-url">
+    </div>
+    <button id="add-calendar-btn">Add Calendar</button>
+    <div class="calendar-layout">
+      <input type="radio" name="layout" id="day" value="timeGridDay">
+      <input type="radio" name="layout" id="week" value="timeGridWeek">
+      <input type="radio" name="layout" id="month" value="timeGridMonth">
+      <input type="radio" name="layout" id="list" value="listMonth">
+    </div>
+  </div>
 </div>
