@@ -5,7 +5,7 @@ from utils.render_utils import screenshot_html
 import requests
 import icalendar
 import recurring_ical_events
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import calendar
 
 
@@ -21,6 +21,7 @@ class CalendarPlugin(BasePlugin):
         events = self._create_events(calendar_url, start, end)
         plugin_settings["events"] = json.dumps(events)
         print(plugin_settings['events'])
+        print(len(plugin_settings['events']))
 
         with app.app_context():
             str = render_template(
@@ -69,14 +70,29 @@ class CalendarPlugin(BasePlugin):
             dtstart = event.get("DTSTART").dt
             dtend = event.get("DTEND").dt if event.get("DTEND") else None
 
-            # Convert datetimes to ISO strings (FullCalendar friendly)
+           # Normalize datetime/date to ISO strings
+            if isinstance(dtstart, datetime):
+                start_str = dtstart.isoformat()
+            elif isinstance(dtstart, date):
+                start_str = dtstart.isoformat()
+            else:
+                continue  # skip unknown type
+
             event_dict = {
                 "title": summary,
-                "start": dtstart.isoformat(),
+                "start": start_str,
             }
+
             if dtend:
-                event_dict["end"] = dtend.isoformat()
+                if isinstance(dtend, datetime):
+                    end_str = dtend.isoformat()
+                elif isinstance(dtend, date):
+                    # FullCalendar treats all-day end as exclusive
+                    # so if ical says 2025-09-18, you might want +1 day
+                    end_str = dtend.isoformat()
+                event_dict["end"] = end_str
 
             event_list.append(event_dict)
-        
+
         return event_list
+
