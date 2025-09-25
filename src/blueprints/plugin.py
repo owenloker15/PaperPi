@@ -1,6 +1,7 @@
 import os
 from flask import current_app, jsonify, render_template, request, send_from_directory, Blueprint
 
+from utils.app_utils import parse_form
 from utils.plugin_utils import get_plugin_instance_by_config
 from utils.task import ManualRefreshTask
 
@@ -23,8 +24,7 @@ def icon(plugin_id):
 
 @plugin_bp.route('/submit_data/<plugin_id>', methods=['POST'])
 def submit_data(plugin_id):
-    payload = request.get_json()
-    print("Received JSON:", payload)
+    payload = parse_form(request.form)
     task_manager = current_app.config["Task_Manager"]
     app_instance = current_app._get_current_object()
 

@@ -26,7 +26,6 @@ class ManualRefreshTask(BaseTask):
         self.thread.start()
 
     def _run(self, app):
-        print(self.plugin_settings)
         plugin_instance = get_plugin_instance_by_id(self.plugin_id)
         return plugin_instance.render_image(self.plugin_settings, app)
 

@@ -24,15 +24,14 @@
     async function saveClicked() {
         const settingsForm = document.getElementById("settings-form");
         const formData = new FormData(settingsForm);
-        const data = Object.fromEntries(formData.entries());
+        // const data = Object.fromEntries(formData.entries());
 
         let url = "{{ url_for('plugin.submit_data', plugin_id=plugin.id) }}";
 
         try {
             const response = await fetch(url, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
+                body: formData
             });
 
             const result = await response.json();

@@ -14,14 +14,13 @@ class CalendarPlugin(BasePlugin):
         super().__init__(id, name)
 
     def render_image(self, plugin_settings, app):
-        calendar_url = plugin_settings["calendarUrl"]
+        calendar_urls = plugin_settings["calendarURLs[]"]
+        calendar_colors = plugin_settings["calendarColors[]"]
         calendar_layout = plugin_settings["layout"]
 
         start, end = self._get_start_end(calendar_layout)
-        events = self._create_events(calendar_url, start, end)
+        events = self._create_events(calendar_urls, calendar_colors, start, end)
         plugin_settings["events"] = json.dumps(events)
-        print(plugin_settings['events'])
-        print(len(plugin_settings['events']))
 
         with app.app_context():
             str = render_template(
@@ -29,10 +28,12 @@ class CalendarPlugin(BasePlugin):
             )
             screenshot_html(str)
 
-    def _create_events(self, calendar_url, start, end):
-        calendar = self._fetch_calendar(calendar_url)
-        events = recurring_ical_events.of(calendar).between(start, end)
-        cleaned_events = self._clean_events(events)
+    def _create_events(self, calendar_urls, calendar_colors, start, end):
+        cleaned_events = []
+        for calendar_url, calendar_color in zip(calendar_urls, calendar_colors):
+            calendar = self._fetch_calendar(calendar_url)
+            events = recurring_ical_events.of(calendar).between(start, end)
+            cleaned_events.extend(self._clean_events(events, calendar_color))
         return cleaned_events
 
     def _fetch_calendar(self, calendar_url) -> icalendar.Calendar:
@@ -62,25 +63,28 @@ class CalendarPlugin(BasePlugin):
 
         return start, end
 
-    def _clean_events(self, events):
+    def _clean_events(self, events, color):
         event_list = []
 
         for event in events:
             summary = str(event.get("SUMMARY"))
             dtstart = event.get("DTSTART").dt
             dtend = event.get("DTEND").dt if event.get("DTEND") else None
+            all_day = False
 
            # Normalize datetime/date to ISO strings
             if isinstance(dtstart, datetime):
                 start_str = dtstart.isoformat()
             elif isinstance(dtstart, date):
                 start_str = dtstart.isoformat()
+                all_day = True
             else:
                 continue  # skip unknown type
 
             event_dict = {
                 "title": summary,
                 "start": start_str,
+                "allDay": all_day,
             }
 
             if dtend:
@@ -91,6 +95,8 @@ class CalendarPlugin(BasePlugin):
                     # so if ical says 2025-09-18, you might want +1 day
                     end_str = dtend.isoformat()
                 event_dict["end"] = end_str
+
+            event_dict["color"] = color
 
             event_list.append(event_dict)
 

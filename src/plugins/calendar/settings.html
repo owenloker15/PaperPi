@@ -1,16 +1,46 @@
 <div class="calendear-settings-container">
-  <div class="calendars-list">
-    <p>Calendars:</p>
-    <div class="calendar-item">
-      <input type="color" name="calendarColor" id="calendar-color">
-      <input type="text" name="calendarUrl" id="calendar-url">
-    </div>
-    <button id="add-calendar-btn">Add Calendar</button>
-    <div class="calendar-layout">
-      <input type="radio" name="layout" id="day" value="timeGridDay" required checked>
-      <input type="radio" name="layout" id="week" value="timeGridWeek">
-      <input type="radio" name="layout" id="month" value="timeGridMonth">
-      <input type="radio" name="layout" id="list" value="listMonth">
-    </div>
+  <div id="calendars-list"></div>
+  <button id="add-calendar-btn" onclick="addCalendarInput()">Add Calendar</button>
+  <div class="calendar-layout">
+    <input type="radio" name="layout" id="day" value="timeGridDay" required checked>
+    <input type="radio" name="layout" id="week" value="timeGridWeek">
+    <input type="radio" name="layout" id="month" value="timeGridMonth">
+    <input type="radio" name="layout" id="list" value="listMonth">
   </div>
 </div>
+<script>
+  function addCalendarInput(url = '', color = '#007BFF') {
+    const calendarList = document.getElementById('calendars-list');
+
+    const wrapper = document.createElement('div');
+
+    const colorInput = document.createElement('input');
+    colorInput.type = 'color';
+    colorInput.name = 'calendarColors[]';
+    colorInput.classList.add('color-picker')
+    colorInput.value = color;
+
+    const urlInput = document.createElement('input');
+    urlInput.type = 'text';
+    urlInput.name = 'calendarURLs[]';
+    urlInput.placeholder = 'Calendar URL';
+    urlInput.required = true;
+    urlInput.value = url;
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.innerText = '✕';
+    removeBtn.classList.add('remove-btn');
+    removeBtn.onclick = () => wrapper.remove();
+
+    wrapper.appendChild(colorInput);
+    wrapper.appendChild(urlInput);
+    wrapper.appendChild(removeBtn);
+
+    calendarList.appendChild(wrapper);
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    addCalendarInput();
+  })
+</script>
