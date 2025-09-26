@@ -18,9 +18,9 @@ class BasePlugin():
         return self.directory
 
     def get_settings_template(self):
-        template_file = os.path.join(self.directory, "settings.html")
+        template_file = os.path.join(self.directory, "settings", "settings.html")
         if os.path.isfile(template_file) :
-            return f"{self.get_id()}/settings.html"
+            return f"{self.get_id()}/settings/settings.html"
 
         return "BAAAD"
 

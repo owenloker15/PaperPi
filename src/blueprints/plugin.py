@@ -22,6 +22,10 @@ def icon(plugin_id):
     plugin_dir = os.path.join(PLUGIN_DIR, plugin_id)
     return send_from_directory(plugin_dir, "icon.svg")
 
+@plugin_bp.route("/styles/<plugin_id>/style.css")
+def plugin_css(plugin_id):
+    return send_from_directory(f"plugins/{plugin_id}/settings", "style.css")
+
 @plugin_bp.route('/submit_data/<plugin_id>', methods=['POST'])
 def submit_data(plugin_id):
     payload = parse_form(request.form)
@@ -30,6 +34,6 @@ def submit_data(plugin_id):
 
     task = ManualRefreshTask(plugin_id, payload, app_instance)
 
-    task_manager.submit_task(ManualRefreshTask)
+    task_manager.submit_task(task)
     
     return jsonify(success=True, received=payload)

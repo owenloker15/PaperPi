@@ -21,6 +21,7 @@ class CalendarPlugin(BasePlugin):
         start, end = self._get_start_end(calendar_layout)
         events = self._create_events(calendar_urls, calendar_colors, start, end)
         plugin_settings["events"] = json.dumps(events)
+        print(plugin_settings["events"])
 
         with app.app_context():
             str = render_template(
@@ -45,23 +46,30 @@ class CalendarPlugin(BasePlugin):
             raise RuntimeError(f"Failed to fetch iCalendar url: {str(e)}")
 
     def _get_start_end(self, calendar_layout):
-        # timezone = pytz.timezone("America/New_York")
         current_dt = datetime.today().date()
+
         if calendar_layout == "timeGridDay":
-            start = current_dt
-            end = current_dt
+            start = datetime.combine(current_dt, datetime.min.time())
+            end = start + timedelta(days=1)
         elif calendar_layout == "timeGridWeek":
-            # + 1 for Sunday start
-            start = current_dt - timedelta(days=current_dt.weekday() + 1)
-            end = start + timedelta(days=6)
-        elif calendar_layout == "timeGridMonth" or calendar_layout == "listMonth":
-            start = current_dt.replace(day=1)
+            # start on Sunday
+            start_date = current_dt - timedelta(days=current_dt.weekday() + 1)
+            start = datetime.combine(start_date, datetime.min.time())
+            end = start + timedelta(days=7)
+        elif calendar_layout in ("dayGridMonth", "listMonth"):
+            # first day of month
+            start_date = current_dt.replace(day=1)
+            start = datetime.combine(start_date, datetime.min.time())
+
+            # last day + 1 (exclusive end)
             month_end = calendar.monthrange(current_dt.year, current_dt.month)[1]
-            end = current_dt.replace(day=month_end)
+            end_date = current_dt.replace(day=month_end) + timedelta(days=1)
+            end = datetime.combine(end_date, datetime.min.time())
         else:
-            print("unsupported")
+            raise ValueError(f"Unsupported layout: {calendar_layout}")
 
         return start, end
+
 
     def _clean_events(self, events, color):
         event_list = []

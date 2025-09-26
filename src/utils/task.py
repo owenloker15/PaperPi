@@ -23,6 +23,8 @@ class ManualRefreshTask(BaseTask):
         self.plugin_settings = plugin_settings
 
         self.thread = threading.Thread(target = self._run, args=(app,), daemon=True)
+
+    def start(self):
         self.thread.start()
 
     def _run(self, app):

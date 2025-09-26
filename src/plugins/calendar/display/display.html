@@ -15,7 +15,13 @@
                 initialView: '{{ settings.layout }}',
                 events: events,
                 slotDuration: "01:00:00",
-                height: 'auto'
+                expandRows: true,
+                height: '100%',
+                headerToolbar: {
+                    left: '',
+                    center: 'title',
+                    right: ''
+                }
             });
             calendar.render();
         });
@@ -31,10 +37,18 @@
             width: 100vw;
             height: 100vh;
         }
+
+        .light-mode {
+            background-color: rgb(238, 238, 238);
+        }
+
+        .dark-mode {
+            background-color: rgb(41, 41, 41);
+        }
     </style>
 </head>
 
-<body>
+<body class="{% if settings.theme == 'light' %}light-mode{% else %}dark-mode{% endif %}">
     <main>
         <div id='calendar'></div>
     </main>
