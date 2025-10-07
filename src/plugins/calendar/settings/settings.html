@@ -1,30 +1,23 @@
 <div class="calendar-settings-container">
+  <h2>Calendar Settings</h2>
   <div id="calendar-list-container">
     <div id="calendars-list"></div>
-    <button id="add-calendar-btn" onclick="addCalendarInput()">Add Calendar</button>
+    <button id="add-calendar-btn" onclick="addCalendarInput()">+ Add Calendar</button>
   </div>
+
   <div class="calendar-layout">
-    <input type="radio" name="layout" id="day" value="timeGridDay" required checked>
-    <label for="day">Day</label>
-
-    <input type="radio" name="layout" id="week" value="timeGridWeek">
-    <label for="week">Week</label>
-
-    <input type="radio" name="layout" id="month" value="dayGridMonth">
-    <label for="month">Month</label>
-
-    <input type="radio" name="layout" id="list" value="listMonth">
-    <label for="list">List</label>
+    <label><input type="radio" name="layout" id="day" value="timeGridDay" checked> Day</label>
+    <label><input type="radio" name="layout" id="week" value="timeGridWeek"> Week</label>
+    <label><input type="radio" name="layout" id="month" value="dayGridMonth"> Month</label>
+    <label><input type="radio" name="layout" id="list" value="listMonth"> List</label>
   </div>
-  <div id="theme">
-    <input type="radio" name="theme" id="light" value="light" required checked>
-    <label for="light">Light Mode</label>
 
-    <input type="radio" name="theme" id="dark" value="dark">
-    <label for="dark">Dark Mode</label>
-
+  <div class="theme-container">
+    <label><input type="radio" name="theme" id="light" value="light" checked> Light</label>
+    <label><input type="radio" name="theme" id="dark" value="dark"> Dark</label>
   </div>
 </div>
+
 <script>
   function addCalendarInput(url = '', color = '#007BFF') {
     const calendarList = document.getElementById('calendars-list');
@@ -58,6 +51,8 @@
     wrapper.appendChild(colorInput);
     wrapper.appendChild(urlInput);
     wrapper.appendChild(removeBtn);
+
+    wrapper.classList.add('calendar-entry');
 
     calendarList.appendChild(wrapper);
   }

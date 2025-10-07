@@ -18,15 +18,15 @@ STATIC_DIR = Path(os.getenv("PROJECT_SRC"), "static")
 def screenshot_html(html_content, output_filename="current_image.png"):
     hti = Html2Image(
     custom_flags=[
-        "--headless",
         "--no-sandbox",
         "--disable-gpu",
-        "--disable-software-rasterizer",
         "--disable-dev-shm-usage",
+        "--disable-software-rasterizer",
         "--disable-extensions",
-        "--disable-features=TranslateUI,Notifications",
-        "--no-first-run",
-        "--no-default-browser-check",
+        "--disable-logging",
+        "--headless",
+        "--no-zygote",
+        "--disable-dbus"
     ]
 )
     hti.output_path = STATIC_DIR.resolve()
