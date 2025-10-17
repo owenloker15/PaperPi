@@ -27,8 +27,8 @@ class CalendarPlugin(BasePlugin):
             str = render_template(
                 "calendar/display/display.html", settings=plugin_settings
             )
-            screenshot_html(str)
-            send_to_pi()
+            image = screenshot_html(str)
+            send_to_pi(image)
 
     def _create_events(self, calendar_urls, calendar_colors, start, end):
         cleaned_events = []
