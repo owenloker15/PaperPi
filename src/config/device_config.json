@@ -1,0 +1,9 @@
+{
+    "name": "PaperPi",
+    "type": "mock",
+    "resolution": {
+        "width": 800,
+        "height": 480
+    },
+    "orientation": "horizontal"
+}

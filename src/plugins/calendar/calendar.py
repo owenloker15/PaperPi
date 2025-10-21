@@ -1,7 +1,7 @@
 import json
-from flask import render_template
+from flask import current_app, render_template
 from plugins.baseplugin import BasePlugin
-from utils.render_utils import screenshot_html, send_to_pi
+from utils.render_utils import screenshot_html
 import requests
 import icalendar
 import recurring_ical_events
@@ -28,7 +28,8 @@ class CalendarPlugin(BasePlugin):
                 "calendar/display/display.html", settings=plugin_settings
             )
             image = screenshot_html(str)
-            send_to_pi(image)
+            display_manager = current_app.config["Display_Manager"]
+            display_manager.update_display(image)
 
     def _create_events(self, calendar_urls, calendar_colors, start, end):
         cleaned_events = []

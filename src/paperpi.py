@@ -1,18 +1,22 @@
-import json
 import os
+from dotenv import load_dotenv
 from flask import Flask
-from jinja2 import ChoiceLoader, Environment, FileSystemLoader
-from blueprints.index import main_bp
-from blueprints.plugin import plugin_bp
+from jinja2 import ChoiceLoader, FileSystemLoader
+from api.index import main_bp
+from api.plugin import plugin_bp
 from configuration import Configuration
+from display.display_manager import DisplayManager
 from utils.plugin_utils import load_plugins
 from utils.task import TaskManager
+
+load_dotenv()
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PLUGIN_DIR = os.path.join(BASE_DIR, "plugins")
 
 app_config = Configuration()
 task_manager = TaskManager()
+display_manager = DisplayManager()
 
 app = Flask(__name__)
 
@@ -28,8 +32,11 @@ def register_blueprints():
 
 def startup():
     load_plugins(app_config.get_plugin_configs())
+
     app.config["Configuration"] = app_config
     app.config["Task_Manager"] = task_manager
+    app.config["Display_Manager"] = display_manager
+
     register_blueprints()
 
 def main():
