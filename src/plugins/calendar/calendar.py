@@ -20,12 +20,11 @@ class CalendarPlugin(BasePlugin):
 
         start, end = self._get_start_end(calendar_layout)
         events = self._create_events(calendar_urls, calendar_colors, start, end)
-        plugin_settings["events"] = json.dumps(events)
-        print(plugin_settings["events"])
+        print(events)
 
         with app.app_context():
             str = render_template(
-                "calendar/display/display.html", settings=plugin_settings
+                "calendar/display/display.html", settings=plugin_settings, events=events
             )
             image = screenshot_html(str)
             display_manager = current_app.config["Display_Manager"]

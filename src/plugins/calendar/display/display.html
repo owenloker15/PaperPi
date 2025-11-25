@@ -7,7 +7,7 @@
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
     <title>Calendar</title>
     <script>
-        const events = {{ settings.events | safe }};
+        const events = {{ events | tojson }};
 
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
@@ -16,12 +16,14 @@
                 events: events,
                 slotDuration: "01:00:00",
                 expandRows: true,
-                height: '100%',
+                slotMinTime: "{{ settings.startTimeInterval or 00}}:00:00",
+                slotMaxTime: "{{ settings.endTimeInterval or 24}}:00:00",
                 headerToolbar: {
                     left: '',
                     center: 'title',
                     right: ''
-                }
+                },
+                contentHeight: '100%'
             });
             calendar.render();
         });
@@ -29,19 +31,17 @@
     </script>
     <style>
         html,
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
+        body,
         main {
             height: 100%;
+            margin: 0;
         }
 
         #calendar {
             width: 100%;
             height: 100%;
+            font-family: "Jost";
+            overflow: hidden;
         }
 
         .light-mode {

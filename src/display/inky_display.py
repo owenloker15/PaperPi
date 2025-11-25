@@ -8,7 +8,6 @@ class InkyDisplay(IDisplay):
         try:
             from inky.auto import auto
             self.inky = auto()
-            print("Inky found!")
         except (ImportError, RuntimeError):
             print("Inky not found!")
 

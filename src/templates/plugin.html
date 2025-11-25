@@ -19,11 +19,11 @@
         <form id="settings-form">
             {% include template %}
         </form>
-        <button type="button" id="save-btn" class="submit-btn" onclick="saveClicked()">Save</button>
+        <button type="button" id="update-btn" class="submit-btn" onclick="updateClicked()">Update</button>
     </main>
 </body>
 <script>
-    async function saveClicked() {
+    async function updateClicked() {
         const settingsForm = document.getElementById("settings-form");
         const formData = new FormData(settingsForm);
         // const data = Object.fromEntries(formData.entries());
