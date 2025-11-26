@@ -14,13 +14,16 @@
   <header>
     <h1>Welcome to PaperPi!</h1>
     <h2>Select a plugin to get started!</h2>
+    <a class="playlist-button" href="{{ url_for('playlist.index') }}">
+      <i class="fas fa-list"></i> View Plugin Playlist
+    </a>
   </header>
+
   <main class="plugin-grid">
     {% for plugin in plugins %}
     <a class="plugin-card" href="{{ url_for('plugin.settings_page', plugin_id=plugin.id) }}">
+      <img class="plugin-icon" src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}" alt="{{ plugin.name }} icon">
       <p class="plugin-name">{{ plugin.name }}</p>
-      <img class="plugin-icon" src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}"
-        alt="{{ plugin.name }} icon">
     </a>
     {% endfor %}
   </main>

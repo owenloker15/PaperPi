@@ -2,7 +2,9 @@
   <h2>Calendars</h2>
   <div id="calendar-list-container">
     <div id="calendars-list"></div>
-    <button id="add-calendar-btn" onclick="addCalendarInput()">+ Add Calendar</button>
+    <button id="add-calendar-btn" onclick="addCalendarInput()">
+      + Add Calendar
+    </button>
   </div>
 </div>
 
@@ -12,81 +14,76 @@
   <div class="setting-entry-container">
     <h3>Layout</h3>
     <div class="setting-entry">
-      <label><input type="radio" name="layout" id="day" value="timeGridDay" checked> Day</label>
-      <label><input type="radio" name="layout" id="week" value="timeGridWeek"> Week</label>
-      <label><input type="radio" name="layout" id="month" value="dayGridMonth"> Month</label>
-      <label><input type="radio" name="layout" id="list" value="listMonth"> List</label>
+      <label
+        ><input
+          type="radio"
+          name="layout"
+          id="day"
+          value="timeGridDay"
+          checked
+        />
+        Day</label
+      >
+      <label
+        ><input type="radio" name="layout" id="week" value="timeGridWeek" />
+        Week</label
+      >
+      <label
+        ><input type="radio" name="layout" id="month" value="dayGridMonth" />
+        Month</label
+      >
+      <label
+        ><input type="radio" name="layout" id="list" value="listMonth" />
+        List</label
+      >
     </div>
   </div>
 
   <div class="setting-entry-container">
     <h3>Theme</h3>
     <div class="setting-entry">
-      <label><input type="radio" name="theme" id="light" value="light" checked> Light</label>
-      <label><input type="radio" name="theme" id="dark" value="dark"> Dark</label>
+      <label
+        ><input type="radio" name="theme" id="light" value="light" checked />
+        Light</label
+      >
+      <label
+        ><input type="radio" name="theme" id="dark" value="dark" /> Dark</label
+      >
     </div>
   </div>
 
-  <div class="setting-entry-container">
-    <h3>Display</h3>
-    <div class="setting-entry">
-      <label><input type="checkbox" name="title" id="title" value="title" checked> Title</label>
-      <label><input type="checkbox" name="weekends" id="weekends" value="weekends" checked> Weekends</label>
-    </div>
-  </div>
+  <!-- <div class="setting-entry-container"> -->
+  <!--   <h3>Display</h3> -->
+  <!--   <div class="setting-entry"> -->
+  <!--     <label><input type="checkbox" name="title" id="title" value="title" checked> Title</label> -->
+  <!--     <label><input type="checkbox" name="weekends" id="weekends" value="weekends" checked> Weekends</label> -->
+  <!--   </div> -->
+  <!-- </div> -->
 
-<div class="setting-entry-container">
+  <div class="setting-entry-container" id="time-interval">
     <h3>Calendar Time Interval</h3>
     <div class="setting-entry">
       <label>
-        <input type="number" name="startTimeInterval" id="startTimeInterval" value="startTimeInterval" min="0" max="23" placeholder="0">
+        <input
+          type="number"
+          name="startTimeInterval"
+          id="startTimeInterval"
+          value="startTimeInterval"
+          min="0"
+          max="23"
+          placeholder="0"
+        />
         -
-        <input type="number" name="endTimeInterval" id="endTimeInterval" value="endTimeInterval" min="1" max="24" placeholder="24">
+        <input
+          type="number"
+          name="endTimeInterval"
+          id="endTimeInterval"
+          value="endTimeInterval"
+          min="1"
+          max="24"
+          placeholder="24"
+        />
       </label>
     </div>
   </div>
 </div>
-
-<script>
-  function addCalendarInput(url = '', color = '#007BFF') {
-    const calendarList = document.getElementById('calendars-list');
-
-    const wrapper = document.createElement('div');
-
-    const colorInput = document.createElement('input');
-    colorInput.type = 'color';
-    colorInput.name = 'calendarColors[]';
-    colorInput.classList.add('color-picker')
-    colorInput.value = color;
-
-    const urlInput = document.createElement('input');
-    urlInput.type = 'text';
-    urlInput.name = 'calendarURLs[]';
-    urlInput.placeholder = 'Calendar URL';
-    urlInput.classList.add('calendar-url')
-    urlInput.required = true;
-    urlInput.value = url;
-
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.innerText = '✕';
-    removeBtn.classList.add('remove-btn');
-    removeBtn.onclick = function () {
-      if (calendarList.childElementCount > 1) {
-        wrapper.remove()
-      };
-    }
-
-    wrapper.appendChild(colorInput);
-    wrapper.appendChild(urlInput);
-    wrapper.appendChild(removeBtn);
-
-    wrapper.classList.add('calendar-entry');
-
-    calendarList.appendChild(wrapper);
-  }
-
-  document.addEventListener('DOMContentLoaded', function () {
-    addCalendarInput();
-  })
-</script>

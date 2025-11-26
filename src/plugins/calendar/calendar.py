@@ -1,26 +1,27 @@
-import json
-from flask import current_app, render_template
-from plugins.baseplugin import BasePlugin
-from utils.render_utils import screenshot_html
-import requests
+import calendar
+from datetime import date, datetime, timedelta
+
 import icalendar
 import recurring_ical_events
-from datetime import datetime, timedelta, date
-import calendar
+import requests
+from flask import current_app, render_template
+
+from plugins.baseplugin import BasePlugin
+from utils.render_utils import screenshot_html
 
 
 class CalendarPlugin(BasePlugin):
     def __init__(self, id, name):
         super().__init__(id, name)
 
-    def render_image(self, plugin_settings, app):
+    def render_image(self, app):
+        plugin_settings = super().get_settings()
         calendar_urls = plugin_settings["calendarURLs[]"]
         calendar_colors = plugin_settings["calendarColors[]"]
         calendar_layout = plugin_settings["layout"]
 
         start, end = self._get_start_end(calendar_layout)
         events = self._create_events(calendar_urls, calendar_colors, start, end)
-        print(events)
 
         with app.app_context():
             str = render_template(
@@ -71,7 +72,6 @@ class CalendarPlugin(BasePlugin):
 
         return start, end
 
-
     def _clean_events(self, events, color):
         event_list = []
 
@@ -81,7 +81,7 @@ class CalendarPlugin(BasePlugin):
             dtend = event.get("DTEND").dt if event.get("DTEND") else None
             all_day = False
 
-           # Normalize datetime/date to ISO strings
+            # Normalize datetime/date to ISO strings
             if isinstance(dtstart, datetime):
                 start_str = dtstart.isoformat()
             elif isinstance(dtstart, date):
@@ -110,4 +110,3 @@ class CalendarPlugin(BasePlugin):
             event_list.append(event_dict)
 
         return event_list
-

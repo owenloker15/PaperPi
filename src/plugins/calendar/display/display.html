@@ -1,63 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js'></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.19/index.global.min.js"></script>
     <title>Calendar</title>
     <script>
-        const events = {{ events | tojson }};
+      const events = {{ events | tojson }};
 
-        document.addEventListener('DOMContentLoaded', function () {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: '{{ settings.layout }}',
-                events: events,
-                slotDuration: "01:00:00",
-                expandRows: true,
-                slotMinTime: "{{ settings.startTimeInterval or 00}}:00:00",
-                slotMaxTime: "{{ settings.endTimeInterval or 24}}:00:00",
-                headerToolbar: {
-                    left: '',
-                    center: 'title',
-                    right: ''
-                },
-                contentHeight: '100%'
-            });
-            calendar.render();
-        });
-
+      document.addEventListener('DOMContentLoaded', function () {
+          var calendarEl = document.getElementById('calendar');
+          var calendar = new FullCalendar.Calendar(calendarEl, {
+              initialView: '{{ settings.layout }}',
+              events: events,
+              slotDuration: "01:00:00",
+              expandRows: true,
+              slotMinTime: "{{ settings.startTimeInterval or 00}}:00:00",
+              slotMaxTime: "{{ settings.endTimeInterval or 24}}:00:00",
+              headerToolbar: {
+                  left: '',
+                  center: 'title',
+                  right: ''
+              },
+              contentHeight: '100%'
+          });
+          calendar.render();
+      });
     </script>
     <style>
-        html,
-        body,
-        main {
-            height: 100%;
-            margin: 0;
-        }
+      html,
+      body,
+      main {
+        height: 100%;
+        margin: 0;
+      }
 
-        #calendar {
-            width: 100%;
-            height: 100%;
-            font-family: "Jost";
-            overflow: hidden;
-        }
+      #calendar {
+        width: 100%;
+        height: 100%;
+        font-family: "Jost";
+        overflow: hidden;
+      }
 
-        .light-mode {
-            background-color: rgb(238, 238, 238);
-        }
+      .light-mode {
+        background-color: rgb(238, 238, 238);
+      }
 
-        .dark-mode {
-            background-color: rgb(41, 41, 41);
-        }
+      .dark-mode {
+        background-color: rgb(41, 41, 41);
+        color: white;
+      }
     </style>
-</head>
+  </head>
 
-<body class="{% if settings.theme == 'light' %}light-mode{% else %}dark-mode{% endif %}">
+  <body
+    class="{% if settings.theme == 'light' %}light-mode{% else %}dark-mode{% endif %}"
+  >
     <main>
-        <div id='calendar'></div>
+      <div id="calendar"></div>
     </main>
-</body>
-
+  </body>
 </html>
+

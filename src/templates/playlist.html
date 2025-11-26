@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plugin Scheduler</title>
+    <style>
+      :root {
+        --background-color: #f6f6f6;
+        --secondary-background-color: #ffffff;
+        --accent-color: #2ecc71;
+        --text-color: #333;
+        --border-color: #e0e0e0;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+        --transition: all 0.25s ease;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", "Segoe UI", sans-serif;
+        background-color: var(--background-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100vh;
+        color: var(--text-color);
+      }
+
+      header {
+        flex-shrink: 0;
+        background-color: var(--accent-color);
+        width: 100%;
+        text-align: center;
+        padding: 20px 0;
+      }
+
+      header a {
+        color: var(--secondary-background-color);
+        text-decoration: none;
+        font-size: 1.5rem;
+      }
+
+      main {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+        width: 90%;
+        max-width: 600px;
+        margin-top: 30px;
+      }
+
+      .card {
+        background-color: var(--secondary-background-color);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px;
+        width: 100%;
+      }
+
+      h1,
+      h2 {
+        margin: 0 0 15px 0;
+      }
+
+      label {
+        display: block;
+        margin: 10px 0 5px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        border-radius: var(--radius);
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+      }
+
+      button {
+        background-color: var(--accent-color);
+        border-radius: var(--radius);
+        height: 35px;
+        color: #fff;
+        border: none;
+        transition: var(--transition);
+        cursor: pointer;
+        width: 100%;
+      }
+
+      button:hover {
+        background-color: #27ae60;
+        transform: scale(1.03);
+      }
+
+      .schedule-list {
+        margin-top: 10px;
+      }
+
+      .schedule-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <a href="#">Plugin Scheduler</a>
+    </header>
+
+    <main>
+      <div class="card">
+        <h1>Plugin Refresh Settings</h1>
+        <label for="plugin-name">Plugin Name:</label>
+        <select class="dropdown" id="refresh-settings">
+          {% for plugin in plugins %}
+          <option value="{{plugin.id}}">{{plugin.name}}</option>
+          {% endfor %}
+        </select>
+
+        <label for="refresh-days">Refresh Interval:</label>
+        <div style="display: flex; gap: 10px">
+          <input
+            type="number"
+            id="refresh-days"
+            placeholder="Days"
+            min="0"
+            value="0"
+          />
+          <input
+            type="number"
+            id="refresh-hours"
+            placeholder="Hours"
+            min="0"
+            value="0"
+          />
+          <input
+            type="number"
+            id="refresh-minutes"
+            placeholder="Minutes"
+            min="0"
+            value="0"
+          />
+          <input
+            type="number"
+            id="refresh-seconds"
+            placeholder="Seconds"
+            min="0"
+            value="0"
+          />
+        </div>
+
+        <button onclick="savePluginSettings()">Save Settings</button>
+      </div>
+
+      <div class="card">
+        <h1>Plugin Activation Schedule</h1>
+        <label for="plugin-name">Plugin Name:</label>
+        <select class="dropdown" id="schedule-time-dropdown">
+          {% for plugin in plugins %}
+          <option value="{{plugin.id}}">{{plugin.name}}</option>
+          {% endfor %}
+        </select>
+
+        <label for="schedule-time">Daily Activation Time:</label>
+        <input type="time" id="schedule-time" />
+
+        <button onclick="addSchedule()">Add Schedule</button>
+
+        <div class="schedule-list" id="schedule-list"></div>
+      </div>
+    </main>
+
+    <script>
+      schedules = [];
+      document.addEventListener("DOMContentLoaded", function () {
+        const refreshDropdown = document.getElementById("refresh-settings");
+
+        refreshDropdown.addEventListener("change", async function () {
+          const daysInput = document.getElementById("refresh-days");
+          const hoursInput = document.getElementById("refresh-hours");
+          const minutesInput = document.getElementById("refresh-minutes");
+          const secondsInput = document.getElementById("refresh-seconds");
+
+          const pluginId = this.value;
+
+          const url = `/playlist/${pluginId}/refresh`;
+
+          try {
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const result = await response.json();
+            const refreshSettings = result.refresh_settings;
+
+            if (result.success) {
+              console.log("Loaded refresh settings:", result);
+
+              daysInput.value = refreshSettings.days;
+              hoursInput.value = refreshSettings.hours;
+              minutesInput.value = refreshSettings.minutes;
+              secondsInput.value = refreshSettings.seconds;
+            } else {
+              console.error("Refresh settings for plugin not found:", result);
+              daysInput.value = 0;
+              hoursInput.value = 0;
+              minutesInput.value = 0;
+              secondsInput.value = 0;
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+        const scheduleDropdown = document.getElementById(
+          "schedule-time-dropdown",
+        );
+        scheduleDropdown.addEventListener("change", async function () {
+          const timeInput = document.getElementById("schedule-time");
+
+          const pluginId = this.value;
+
+          const url = `/playlist/${pluginId}/schedule`;
+
+          try {
+            const response = await fetch(url, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            });
+
+            const result = await response.json();
+            const scheduleSettings = result.plugin_schedule;
+
+            if (result.success) {
+              console.log("Loaded schedule settings:", result);
+
+              timeInput.value = scheduleSettings.dailyTime;
+            } else {
+              console.error("Schedule settings for plugin not found:", result);
+              timeInput.value = "00:00";
+            }
+          } catch (error) {
+            console.error("Error:", error);
+          }
+        });
+      });
+
+      async function savePluginSettings() {
+        const pluginId = document.getElementById("refresh-settings").value;
+
+        const days =
+          parseInt(document.getElementById("refresh-days").value) || 0;
+        const hours =
+          parseInt(document.getElementById("refresh-hours").value) || 0;
+        const minutes =
+          parseInt(document.getElementById("refresh-minutes").value) || 0;
+        const seconds =
+          parseInt(document.getElementById("refresh-seconds").value) || 0;
+
+        const data = {
+          seconds: seconds,
+          minutes: minutes,
+          hours: hours,
+          days: days,
+        };
+
+        const url = `/playlist/${pluginId}/refresh`;
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("GOOD! " + JSON.stringify(result));
+          } else {
+            alert("BAD! " + JSON.stringify(result));
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while processing your request.");
+        }
+      }
+
+      async function addSchedule() {
+        const pluginId = document.getElementById(
+          "schedule-time-dropdown",
+        ).value;
+        const time = document.getElementById("schedule-time").value;
+        console.log(pluginId);
+        console.log(time);
+
+        const data = {
+          dailyTime: time,
+        };
+
+        const url = `/playlist/${pluginId}/schedule`;
+
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert("GOOD! " + JSON.stringify(result));
+          } else {
+            alert("BAD! " + JSON.stringify(result));
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          alert("An error occurred while processing your request.");
+        }
+      }
+    </script>
+  </body>
+</html>

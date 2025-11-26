@@ -2,11 +2,13 @@ import os
 
 PLUGIN_DIR = os.path.dirname(os.path.abspath(__file__))
 
-class BasePlugin():
+
+class BasePlugin:
     def __init__(self, id, name):
         self.id = id
         self.name = name
         self.directory = os.path.join(PLUGIN_DIR, self.id)
+        self.settings = {}
 
     def get_id(self):
         return self.id
@@ -19,11 +21,16 @@ class BasePlugin():
 
     def get_settings_template(self):
         template_file = os.path.join(self.directory, "settings", "settings.html")
-        if os.path.isfile(template_file) :
+        if os.path.isfile(template_file):
             return f"{self.get_id()}/settings/settings.html"
 
-        return "BAAAD"
+        return f"Failed to find settings.html file for {self.name}"
 
-    def render_image(self, plugin_settings, app):
+    def save_settings(self, plugin_settings):
+        self.settings = plugin_settings
+
+    def get_settings(self):
+        return self.settings
+
+    def render_image(self, app):
         pass
-    
