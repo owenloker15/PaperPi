@@ -14,6 +14,13 @@ def index():
     return render_template("playlist.html", plugins=app_config.get_plugin_configs())
 
 
+@playlist_bp.route("/playlist/settings")
+def get_playlist_settings():
+    playlist = current_app.config["Playlist"]
+    settings = playlist.get_playlist_settings_for_all()
+    return jsonify(success=True, settings=settings)
+
+
 @playlist_bp.route("/playlist/<plugin_id>/refresh", methods=["POST"])
 def update_plugin_refresh(plugin_id):
     payload = request.get_json()

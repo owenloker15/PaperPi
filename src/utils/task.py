@@ -1,6 +1,7 @@
 import threading
 import time
 
+from utils.app_utils import json_to_timedelta, next_active_plugin
 from utils.plugin_utils import get_plugin_instance_by_id
 
 
@@ -62,17 +63,28 @@ class BackgroundRefreshTask(BaseTask):
     def _run(self, app):
         while self.running:
             active_plugin_id = self.playlist.get_active_plugin_id()
-            if active_plugin_id is not "":
+
+            # Get next active plugin
+            next_active_plugin_id = next_active_plugin(self.playlist, app)
+
+            print(active_plugin_id)
+            print(next_active_plugin_id)
+            if active_plugin_id is not None:
                 plugin_instance = get_plugin_instance_by_id(active_plugin_id)
                 plugin_instance.render_image(app)
+                refresh_settings = self.playlist.get_plugin_refresh_timing(
+                    active_plugin_id
+                )
+                time_delta = json_to_timedelta(refresh_settings)
+                total_sleep_seconds = time_delta.total_seconds()
+                time.sleep(total_sleep_seconds)
             else:
                 print("No active plugin set!")
-            time.sleep(10000)
 
 
 class TaskManager:
     def __init__(self):
-        self.activeTasks = list[BaseTask]
+        self.activeTasks: list[BaseTask] = []
 
     def submit_task(self, task: BaseTask):
         task.start()
