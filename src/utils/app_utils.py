@@ -60,7 +60,7 @@ def next_active_plugin(playlist, app):
 
     current_datetime = datetime.now()
     closest_plugin = None
-    closest_time = timedelta()
+    closest_time = None
 
     for schedule in schedules:
         daily_time_str = schedule.get("dailyTime")

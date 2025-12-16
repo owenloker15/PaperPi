@@ -63,34 +63,57 @@ class BackgroundRefreshTask(BaseTask):
     def _run(self, app):
         while self.running:
             active_plugin_id = self.playlist.get_active_plugin_id()
+            next_plugin_id, schedule_delta = next_active_plugin(self.playlist, app)
 
-            # Get next active plugin
-            next_active_plugin_id, schedule_time_delta = next_active_plugin(
-                self.playlist, app
-            )
+            print(f"Active Plugin: {active_plugin_id}")
+            print(f"Next Plugin: {next_plugin_id}")
 
-            print(f"Active Plugin: ", active_plugin_id)
-            print(f"Next Plugin: ", next_active_plugin_id)
+            refresh_delta = timedelta()
+
+            # Determine refresh timing
             if active_plugin_id is not None:
-                plugin_instance = get_plugin_instance_by_id(active_plugin_id)
-                plugin_instance.render_image(app)
                 refresh_settings = self.playlist.get_plugin_refresh_timing(
                     active_plugin_id
                 )
-                refresh_time_delta = json_to_timedelta(refresh_settings)
+                refresh_delta = json_to_timedelta(refresh_settings)
 
-                # If the next trigger event is a plugin change, change the active plugin then sleep
-                # else, just sleep till next refresh.
-                if next_active_plugin_id is not None:
-                    if schedule_time_delta < refresh_time_delta:
-                        self.playlist.set_active_plugin_id(next_active_plugin_id)
-                        time.sleep(schedule_time_delta.total_seconds())
-                    else:
-                        time.sleep(refresh_time_delta.total_seconds())
-                else:
-                    time.sleep(refresh_time_delta.total_seconds())
+            # Possible events:
+            # 1) Refresh active plugin
+            # 2) Switch to next scheduled plugin
+            # 3) Idle (nothing configured)
+
+            # Case: no active plugin AND no scheduled plugin
+            if active_plugin_id is None and next_plugin_id is None:
+                print("No active or scheduled plugin. Sleeping briefly.")
+                time.sleep(1)
+                continue
+
+            # Case: active plugin exists → render immediately
+            if active_plugin_id is not None:
+                plugin_instance = get_plugin_instance_by_id(active_plugin_id)
+                plugin_instance.render_image(app)
+
+            # Case: only scheduled plugin exists (no active yet)
+            if active_plugin_id is None and next_plugin_id is not None:
+                print("Waiting for scheduled plugin to become active.")
+                time.sleep(schedule_delta.total_seconds())
+                self.playlist.set_active_plugin_id(next_plugin_id)
+                continue
+
+            # Case: active exists but no scheduled plugin
+            if active_plugin_id is not None and next_plugin_id is None:
+                time.sleep(refresh_delta.total_seconds())
+                continue
+
+            # Case: both active and scheduled plugins exist
+            # Choose the earlier event
+            if schedule_delta < refresh_delta:
+                # Plugin switch happens first
+                time.sleep(schedule_delta.total_seconds())
+                self.playlist.set_active_plugin_id(next_plugin_id)
             else:
-                print("No active plugin set!")
+                # Refresh happens first
+                time.sleep(refresh_delta.total_seconds())
 
 
 class TaskManager:
