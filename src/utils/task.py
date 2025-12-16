@@ -1,5 +1,6 @@
 import threading
 import time
+from datetime import datetime, timedelta
 
 from utils.app_utils import json_to_timedelta, next_active_plugin
 from utils.plugin_utils import get_plugin_instance_by_id
@@ -40,7 +41,6 @@ class ManualRefreshTask(BaseTask):
 
 class BackgroundRefreshTask(BaseTask):
     def __init__(self, app):
-        self.thread = None
         self.running = False
         self.thread = threading.Thread(target=self._run, args=(app,), daemon=True)
         self.playlist = app.config["Playlist"]
@@ -65,19 +65,30 @@ class BackgroundRefreshTask(BaseTask):
             active_plugin_id = self.playlist.get_active_plugin_id()
 
             # Get next active plugin
-            next_active_plugin_id = next_active_plugin(self.playlist, app)
+            next_active_plugin_id, schedule_time_delta = next_active_plugin(
+                self.playlist, app
+            )
 
-            print(active_plugin_id)
-            print(next_active_plugin_id)
+            print(f"Active Plugin: ", active_plugin_id)
+            print(f"Next Plugin: ", next_active_plugin_id)
             if active_plugin_id is not None:
                 plugin_instance = get_plugin_instance_by_id(active_plugin_id)
                 plugin_instance.render_image(app)
                 refresh_settings = self.playlist.get_plugin_refresh_timing(
                     active_plugin_id
                 )
-                time_delta = json_to_timedelta(refresh_settings)
-                total_sleep_seconds = time_delta.total_seconds()
-                time.sleep(total_sleep_seconds)
+                refresh_time_delta = json_to_timedelta(refresh_settings)
+
+                # If the next trigger event is a plugin change, change the active plugin then sleep
+                # else, just sleep till next refresh.
+                if next_active_plugin_id is not None:
+                    if schedule_time_delta < refresh_time_delta:
+                        self.playlist.set_active_plugin_id(next_active_plugin_id)
+                        time.sleep(schedule_time_delta.total_seconds())
+                    else:
+                        time.sleep(refresh_time_delta.total_seconds())
+                else:
+                    time.sleep(refresh_time_delta.total_seconds())
             else:
                 print("No active plugin set!")
 

@@ -1,13 +1,40 @@
+import os
 from datetime import datetime, timedelta
 
 from flask import current_app
 
 
-def parse_form(request_form):
+def parse_form(request_form, request_files=None):
+    """
+    Parses form data and files into a single dictionary.
+
+    request_form: request.form
+    request_files: request.files (optional)
+    """
     request_dict = request_form.to_dict()
+
+    # Handle multi-value fields like calendarURLs[]
     for key in request_form.keys():
         if key.endswith("[]"):
             request_dict[key] = request_form.getlist(key)
+
+    # Handle uploaded files
+    if request_files:
+        for key in request_files.keys():
+            files = request_files.getlist(key)
+            if files:
+                saved_paths = []
+                for f in files:
+                    if f.filename == "":
+                        continue
+                    # Save each file to plugin-specific folder
+                    folder = f"static/uploads/plugins/{key}"
+                    os.makedirs(folder, exist_ok=True)
+                    path = os.path.join(folder, f.filename)
+                    f.save(path)
+                    saved_paths.append(path)
+                request_dict[key] = saved_paths
+
     return request_dict
 
 
@@ -33,7 +60,7 @@ def next_active_plugin(playlist, app):
 
     current_datetime = datetime.now()
     closest_plugin = None
-    closest_time = None
+    closest_time = timedelta()
 
     for schedule in schedules:
         daily_time_str = schedule.get("dailyTime")
@@ -54,4 +81,4 @@ def next_active_plugin(playlist, app):
             closest_time = time_diff
             closest_plugin = schedule["id"]
 
-    return closest_plugin
+    return closest_plugin, closest_time

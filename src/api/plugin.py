@@ -45,12 +45,12 @@ def plugin_script(plugin_id):
 
 @plugin_bp.route("/submit_data/<plugin_id>", methods=["POST"])
 def submit_data(plugin_id):
-    payload = parse_form(request.form)
+    payload = parse_form(request.form, request.files)
+
     task_manager = current_app.config["Task_Manager"]
     app_instance = current_app._get_current_object()
 
     task = ManualRefreshTask(plugin_id, payload, app_instance)
-
     task_manager.submit_task(task)
 
     return jsonify(success=True, received=payload)
