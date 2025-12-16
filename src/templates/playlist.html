@@ -1,308 +1,45 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Plugin Scheduler</title>
-    <style>
-      :root {
-        --background-color: #f6f6f6;
-        --secondary-background-color: #ffffff;
-        --accent-color: #2ecc71;
-        --text-color: #333;
-        --border-color: #e0e0e0;
-        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        --radius: 14px;
-        --transition: all 0.25s ease;
-      }
+{% extends "base.html" %} {% block title %}Playlist · PaperPi{% endblock %} {%
+block content %}
+<div class="row">
+  <div class="card stack" style="flex: 1">
+    <h2>Refresh Settings</h2>
 
-      body {
-        margin: 0;
-        padding: 0;
-        font-family: "Inter", "Segoe UI", sans-serif;
-        background-color: var(--background-color);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+    <label>Plugin</label>
+    <select id="refresh-settings">
+      {% for plugin in plugins %}
+      <option value="{{ plugin.id }}">{{ plugin.name }}</option>
+      {% endfor %}
+    </select>
 
-      header {
-        background-color: var(--accent-color);
-        padding: 20px 0;
-        text-align: center;
-        color: white;
-        font-size: 1.8rem;
-        font-weight: bold;
-        box-shadow: var(--shadow);
-      }
+    <label>Interval</label>
+    <div class="row">
+      <input type="number" id="refresh-days" placeholder="Days" />
+      <input type="number" id="refresh-hours" placeholder="Hours" />
+      <input type="number" id="refresh-minutes" placeholder="Minutes" />
+      <input type="number" id="refresh-seconds" placeholder="Seconds" />
+    </div>
 
-      main {
-        width: 100%;
-        max-width: 1200px;
-        margin: 30px auto;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-      }
+    <button onclick="savePluginSettings()">Save</button>
+  </div>
 
-      .card,
-      .plugin-card {
-        background-color: var(--secondary-background-color);
-        padding: 20px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        transition: var(--transition);
-      }
+  <div class="card stack" style="flex: 1">
+    <h2>Activation Schedule</h2>
 
-      .card:hover,
-      .plugin-card:hover {
-        transform: translateY(-4px);
-      }
+    <label>Plugin</label>
+    <select id="schedule-time-dropdown">
+      {% for plugin in plugins %}
+      <option value="{{ plugin.id }}">{{ plugin.name }}</option>
+      {% endfor %}
+    </select>
 
-      .card h1,
-      .card h2,
-      .plugin-card h2 {
-        margin-top: 0;
-      }
+    <label>Daily Time</label>
+    <input type="time" id="schedule-time" />
 
-      label {
-        display: block;
-        margin: 10px 0 6px;
-        font-weight: 500;
-      }
+    <button onclick="addSchedule()">Save</button>
+  </div>
+</div>
 
-      input,
-      select {
-        width: 100%;
-        padding: 10px;
-        border-radius: var(--radius);
-        border: 1px solid var(--border-color);
-        font-size: 1rem;
-      }
-
-      button {
-        width: 100%;
-        padding: 10px;
-        background-color: var(--accent-color);
-        color: white;
-        border: none;
-        border-radius: var(--radius);
-        cursor: pointer;
-        font-size: 1rem;
-        font-weight: bold;
-        transition: var(--transition);
-      }
-
-      button:hover {
-        background-color: #27ae60;
-        transform: scale(1.03);
-      }
-
-      .plugin-grid {
-        grid-column: span 2;
-        margin-top: 20px;
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 20px;
-      }
-
-      .plugin-info {
-        padding-top: 10px;
-        font-size: 0.9rem;
-        color: #666;
-      }
-    </style>
-  </head>
-
-  <body>
-    <header>Plugin Scheduler</header>
-
-    <main>
-      <!-- LEFT: Refresh Settings -->
-      <div class="card">
-        <h1>Refresh Settings</h1>
-        <label>Plugin:</label>
-        <select id="refresh-settings">
-          {% for plugin in plugins %}
-          <option value="{{plugin.id}}">{{plugin.name}}</option>
-          {% endfor %}
-        </select>
-
-        <label>Refresh Interval:</label>
-        <div style="display: flex; gap: 8px">
-          <input type="number" id="refresh-days" placeholder="Days" min="0" />
-          <input type="number" id="refresh-hours" placeholder="Hours" min="0" />
-          <input
-            type="number"
-            id="refresh-minutes"
-            placeholder="Minutes"
-            min="0"
-          />
-          <input
-            type="number"
-            id="refresh-seconds"
-            placeholder="Seconds"
-            min="0"
-          />
-        </div>
-
-        <button onclick="savePluginSettings()">Save</button>
-      </div>
-
-      <!-- RIGHT: Activation Schedule -->
-      <div class="card">
-        <h1>Activation Schedule</h1>
-        <label>Plugin:</label>
-        <select id="schedule-time-dropdown">
-          {% for plugin in plugins %}
-          <option value="{{plugin.id}}">{{plugin.name}}</option>
-          {% endfor %}
-        </select>
-
-        <label>Daily Activation Time:</label>
-        <input type="time" id="schedule-time" />
-
-        <button onclick="addSchedule()">Save Schedule</button>
-      </div>
-
-      <!-- Plugin Cards: dynamically injected by JS -->
-      <div id="plugin-grid" class="plugin-grid"></div>
-    </main>
-
-    <script>
-      async function loadPluginCards() {
-        const container = document.querySelector(".plugin-grid");
-        container.innerHTML = "";
-
-        try {
-          const response = await fetch(`/playlist/settings`);
-          const settings = await response.json();
-
-          const playlist_settings = settings.settings;
-          console.log(playlist_settings);
-
-          playlist_settings.forEach((plugin) => {
-            const card = document.createElement("div");
-            card.className = "plugin-card";
-
-            let html = `<h2>${plugin.pluginName}</h2>`;
-
-            const r = plugin.refreshSettings || {};
-            if (
-              r.days !== undefined ||
-              r.hours !== undefined ||
-              r.minutes !== undefined ||
-              r.seconds !== undefined
-            ) {
-              html += `
-        <div class='plugin-info'>
-          <strong>Refresh:</strong>
-          ${r.days ?? 0}d ${r.hours ?? 0}h ${r.minutes ?? 0}m ${r.seconds ?? 0}s
-        </div>`;
-            }
-
-            const s = plugin.scheduleSettings || {};
-            if (s.dailyTime) {
-              html += `
-        <div class='plugin-info'>
-          <strong>Daily Time:</strong> ${s.dailyTime ?? "00:00"}
-        </div>`;
-            }
-
-            card.innerHTML = html;
-            container.appendChild(card);
-          });
-        } catch (err) {
-          console.error("Error loading card data", err);
-        }
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const refreshDropdown = document.getElementById("refresh-settings");
-
-        refreshDropdown.addEventListener("change", async function () {
-          const url = `/playlist/${this.value}/refresh`;
-          const days = document.getElementById("refresh-days");
-          const hours = document.getElementById("refresh-hours");
-          const minutes = document.getElementById("refresh-minutes");
-          const seconds = document.getElementById("refresh-seconds");
-
-          try {
-            const r = await fetch(url).then((res) => res.json());
-
-            if (r.success) {
-              const v = r.refresh_settings;
-              days.value = v.days;
-              hours.value = v.hours;
-              minutes.value = v.minutes;
-              seconds.value = v.seconds;
-            } else {
-              days.value = hours.value = minutes.value = seconds.value = 0;
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        });
-
-        const scheduleDropdown = document.getElementById(
-          "schedule-time-dropdown",
-        );
-
-        scheduleDropdown.addEventListener("change", async function () {
-          const url = `/playlist/${this.value}/schedule`;
-          const input = document.getElementById("schedule-time");
-
-          try {
-            const r = await fetch(url).then((res) => res.json());
-            input.value = r.success ? r.plugin_schedule.dailyTime : "00:00";
-          } catch (err) {
-            console.error(err);
-          }
-        });
-
-        loadPluginCards();
-      });
-
-      async function savePluginSettings() {
-        const id = document.getElementById("refresh-settings").value;
-        const data = {
-          days: +document.getElementById("refresh-days").value || 0,
-          hours: +document.getElementById("refresh-hours").value || 0,
-          minutes: +document.getElementById("refresh-minutes").value || 0,
-          seconds: +document.getElementById("refresh-seconds").value || 0,
-        };
-
-        try {
-          const res = await fetch(`/playlist/${id}/refresh`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          });
-
-          alert(JSON.stringify(await res.json()));
-          loadPluginCards();
-        } catch (err) {
-          console.error(err);
-        }
-      }
-
-      async function addSchedule() {
-        const id = document.getElementById("schedule-time-dropdown").value;
-        const time = document.getElementById("schedule-time").value;
-
-        try {
-          const res = await fetch(`/playlist/${id}/schedule`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ dailyTime: time }),
-          });
-
-          alert(JSON.stringify(await res.json()));
-          loadPluginCards();
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    </script>
-  </body>
-</html>
+<div class="plugin-grid" id="plugin-grid"></div>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/playlist.js') }}"></script>
+{% endblock %}

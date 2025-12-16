@@ -1,32 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}Plugins · PaperPi{% endblock %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plugin Selector</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='style/style.css') }}">
-  <!-- Using Font Awesome for icons -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
-</head>
+{% block content %}
+<div class="stack">
+  <div class="card">
+    <h1>Available Plugins</h1>
+    <p>Select a plugin to configure.</p>
+  </div>
 
-<body>
-  <header>
-    <h1>Welcome to PaperPi!</h1>
-    <h2>Select a plugin to get started!</h2>
-    <a class="playlist-button" href="{{ url_for('playlist.index') }}">
-      <i class="fas fa-list"></i> View Plugin Playlist
-    </a>
-  </header>
-
-  <main class="plugin-grid">
+  <div class="plugin-grid">
     {% for plugin in plugins %}
-    <a class="plugin-card" href="{{ url_for('plugin.settings_page', plugin_id=plugin.id) }}">
-      <img class="plugin-icon" src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}" alt="{{ plugin.name }} icon">
-      <p class="plugin-name">{{ plugin.name }}</p>
+    <a class="card plugin-card"
+       href="{{ url_for('plugin.settings_page', plugin_id=plugin.id) }}">
+      <img src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}">
+      <strong>{{ plugin.name }}</strong>
     </a>
     {% endfor %}
-  </main>
-</body>
-
-</html>
+  </div>
+</div>
+{% endblock %}

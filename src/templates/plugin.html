@@ -1,56 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block title %}{{ plugin.name }} · PaperPi{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{{ url_for('plugin.plugin_css', plugin_id=plugin.id) }}">
-    <script src="{{ url_for('plugin.plugin_script', plugin_id=plugin.id) }}"></script>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style/plugin.css') }}">
-</head>
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('plugin.plugin_css', plugin_id=plugin.id) }}">
+{% endblock %}
 
-<body>
-    <header>
-        <a href="{{ url_for('main.index') }}">Home</a>
-    </header>
-    <main>
-        <h1>{{plugin.name}}</h1>
+{% block content %}
+<div class="card stack">
+  <h1>{{ plugin.name }}</h1>
 
-        <form id="settings-form">
-            {% include template %}
-        </form>
-        <button type="button" id="update-btn" class="submit-btn" onclick="updateClicked()">Update</button>
-    </main>
-</body>
-<script>
-    async function updateClicked() {
-        const settingsForm = document.getElementById("settings-form");
-        const formData = new FormData(settingsForm);
-        // const data = Object.fromEntries(formData.entries());
+    <form
+      id="settings-form"
+      class="stack"
+      data-submit-url="{{ url_for('plugin.submit_data', plugin_id=plugin.id) }}"
+    >
+    {% include template %}
+  </form>
 
-        let url = "{{ url_for('plugin.submit_data', plugin_id=plugin.id) }}";
+  <button onclick="updateClicked()">Update</button>
+</div>
+{% endblock %}
 
-        try {
-            const response = await fetch(url, {
-                method: "POST",
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert('GOOD! ' + JSON.stringify(result));
-            } else {
-                alert('BAD! ' + JSON.stringify(result));
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('An error occurred while processing your request.');
-        }
-    }
-
-</script>
-
-
-</html>
+{% block scripts %}
+<script src="{{ url_for('plugin.plugin_script', plugin_id=plugin.id) }}"></script>
+<script src="{{ url_for('static', filename='js/plugin.js') }}"></script>
+{% endblock %}
