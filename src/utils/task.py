@@ -68,7 +68,7 @@ class BackgroundRefreshTask(BaseTask):
             print(f"Active Plugin: {active_plugin_id}")
             print(f"Next Plugin: {next_plugin_id}")
 
-            refresh_delta = timedelta()
+            refresh_delta = None
 
             # Determine refresh timing
             if active_plugin_id is not None:

@@ -1,24 +1,27 @@
-from display.idisplay import IDisplay
-from pathlib import Path
-import os
 import json
+import os
+from pathlib import Path
 
+from display.idisplay import IDisplay
 from display.inky_display import InkyDisplay
 from display.mock_display import MockDisplay
+
 
 class DisplayManager:
     def __init__(self):
         self.display = None
 
-        device_config_file = Path(os.getenv("PROJECT_SRC"), "config", "device_config.json")
+        device_config_file = Path(
+            os.getenv("PROJECT_SRC"), "config", "device_config.json"
+        )
         with open(device_config_file, "r") as file:
             data = json.load(file)
-        
-        res_width = data['resolution']['width']
-        res_heght = data['resolution']['height']
+
+        res_width = data["resolution"]["width"]
+        res_heght = data["resolution"]["height"]
         self.set_resolution(res_width, res_heght)
 
-        display_type = data['type']
+        display_type = data["type"]
         match display_type:
             case "mock":
                 self.set_display(MockDisplay(data))
@@ -35,7 +38,7 @@ class DisplayManager:
 
     def set_display(self, display: IDisplay):
         self.display = display
-    
+
     def get_display(self):
         return self.display
 
@@ -47,5 +50,8 @@ class DisplayManager:
         if self.display is None:
             print("Display is empty!")
             return
-        
+
+        img_file_location = Path(os.getenv("PROJECT_SRC"), "static")
+        img.save(img_file_location / "current_display_image.png")
         self.display.upload_image(img)
+

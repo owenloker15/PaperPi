@@ -1,21 +1,72 @@
 {% extends "base.html" %}
-{% block title %}Plugins · PaperPi{% endblock %}
+{% block title %}Home · PaperPi{% endblock %}
 
 {% block content %}
-<div class="stack">
-  <div class="card">
-    <h1>Available Plugins</h1>
-    <p>Select a plugin to configure.</p>
-  </div>
+<div class="layout">
 
-  <div class="plugin-grid">
-    {% for plugin in plugins %}
-    <a class="card plugin-card"
-       href="{{ url_for('plugin.settings_page', plugin_id=plugin.id) }}">
-      <img src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}">
-      <strong>{{ plugin.name }}</strong>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Plugins</h2>
+
+    <div class="plugin-icon-grid">
+      {% for plugin in plugins %}
+      <a
+        href="{{ url_for('plugin.settings_page', plugin_id=plugin.id) }}"
+        class="plugin-icon-tile {% if active_plugin and plugin.id == active_plugin.id %}active{% endif %}"
+      >
+        <img
+          src="{{ url_for('plugin.icon', plugin_id=plugin.id) }}"
+          alt="{{ plugin.name }}"
+        />
+        <span>{{ plugin.name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+
+    <a href="{{ url_for('playlist.index') }}" class="button sidebar-button">
+      Manage Playlist
     </a>
-    {% endfor %}
-  </div>
+  </aside>
+
+  <!-- Main display -->
+  <section class="display">
+
+    <header class="display-header">
+      <h1>Now Displaying</h1>
+      <span class="display-subtitle">
+        {{ active_plugin.name if active_plugin else "No Active Plugin" }}
+      </span>
+    </header>
+
+    <div class="display-frame">
+
+      <!-- Placeholder -->
+      <div class="display-placeholder" id="display-placeholder">
+        <div class="placeholder-icon">🖼️</div>
+        <h2>Nothing is currently displayed</h2>
+
+        {% if active_plugin %}
+        <p>
+          <strong>{{ active_plugin.name }}</strong> has not produced an image yet.
+        </p>
+        {% else %}
+        <p>
+          Select a plugin or configure a schedule to begin.
+        </p>
+        {% endif %}
+      </div>
+
+      <!-- Image -->
+      <img
+        src="{{ url_for('static', filename='current_display_image.png') }}?t={{ config['START_TIME'] }}"
+        alt="Current display"
+        class="display-image"
+        onload="this.previousElementSibling.style.display='none'"
+        onerror="this.style.display='none'"
+      />
+
+    </div>
+
+  </section>
 </div>
 {% endblock %}
