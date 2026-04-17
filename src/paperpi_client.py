@@ -8,10 +8,10 @@ from io import BytesIO
 
 from display.display_manager import DisplayManager
 
+load_dotenv()
+
 sio = Client()
 display_manager = DisplayManager()
-
-load_dotenv()
 
 @sio.on("connect")
 def on_connect():
