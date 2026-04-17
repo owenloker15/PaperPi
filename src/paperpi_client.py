@@ -19,6 +19,7 @@ def on_connect():
 
 @sio.on("update_display")
 def on_update_display(data):
+    print("signal received")
     img_bytes = base64.b64decode(data["data"])
     img = Image.open(BytesIO(img_bytes))
 
