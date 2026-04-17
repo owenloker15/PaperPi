@@ -12,10 +12,11 @@ class InkyDisplay(IDisplay):
         print("Created inky display")
         try:
             from inky.auto import auto
-
             self.inky = auto()
-        except (ImportError, RuntimeError):
-            print("Inky not found!")
+        except (ImportError, RuntimeError) as e:
+            print(f"Inky not found! Error: {e}")
+        except Exception as e:
+            print(f"Inky unexpected error: {type(e).__name__}: {e}")
 
     def upload_image(self, img):
         if self.inky is None:
