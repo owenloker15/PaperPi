@@ -23,10 +23,10 @@ app_config = Configuration()
 task_manager = TaskManager()
 display_manager = DisplayManager()
 playlist = Playlist()
-socketio = SocketIO(app, cors_allowed_origins="*")  # add socketio
 
 app = Flask(__name__)
 
+socketio = SocketIO(app, cors_allowed_origins="*")  # add socketio
 
 template_dirs = [
     os.path.join(os.path.dirname(__file__), "templates"),

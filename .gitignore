@@ -3,3 +3,4 @@ venv/
 __pycache__/
 *.pyo
 *.pyc
+/src/static/current_display_image.png

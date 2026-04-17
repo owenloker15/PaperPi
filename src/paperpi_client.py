@@ -1,3 +1,5 @@
+import os
+
 from socketio import Client
 
 sio = Client()
@@ -14,5 +16,5 @@ def on_update(data):
 
 
 port = os.getenv("PORT")
-sio.connect(f"http://localhost:{port}")
+sio.connect(f"http://localhost:5000")
 sio.wait()
