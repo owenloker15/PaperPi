@@ -15,7 +15,7 @@ def on_update(data):
 
 
 # Read host and port from environment (with sensible defaults)
-host = os.getenv("SERVER_HOST", "172.18.32.1")  # <-- change this default
+host = os.getenv("SERVER_HOST", "192.168.1.93")  # <-- change this default
 port = os.getenv("PORT", "5000")
 
 url = f"http://{host}:{port}"
