@@ -1,6 +1,7 @@
 import base64
 import os
 
+from dotenv import load_dotenv
 from socketio import Client
 from PIL import Image
 from io import BytesIO
@@ -10,6 +11,7 @@ from display.display_manager import DisplayManager
 sio = Client()
 display_manager = DisplayManager()
 
+load_dotenv()
 
 @sio.on("connect")
 def on_connect():
