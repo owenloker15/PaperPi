@@ -1,3 +1,5 @@
+import base64
+
 from PIL import Image
 from flask import current_app
 
@@ -16,3 +18,19 @@ def screenshot_html(html_content):
         # Load into PIL
         img = Image.open(BytesIO(png_bytes))
         return img
+
+def send_image(img):
+    """
+    Send a PIL image over WebSocket as base64 PNG.
+    """
+    buffer = BytesIO()
+    img.save(buffer, format="PNG")  # encode image
+    buffer.seek(0)
+
+    encoded = base64.b64encode(buffer.read()).decode("utf-8")
+
+    socketio = current_app.config["socketio"]
+
+    socketio.emit("display_image", {
+        "data": encoded
+    })

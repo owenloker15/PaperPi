@@ -1,18 +1,28 @@
+import base64
 import os
+
 from socketio import Client
+from PIL import Image
+from io import BytesIO
+
+from display.display_manager import DisplayManager
 
 sio = Client()
+display_manager = DisplayManager()
 
 
 @sio.on("connect")
 def on_connect():
     print("Connected to server")
 
+@sio.on("update_display")
+def on_update_display(data):
+    img_bytes = base64.b64decode(data["data"])
+    img = Image.open(BytesIO(img_bytes))
 
-@sio.on("update")
-def on_update(data):
-    print("Got update:", data)
+    display_manager.update_display(img)
 
+    print("Display updated")
 
 # Read host and port from environment (with sensible defaults)
 host = os.getenv("SERVER_HOST", "192.168.1.93")  # <-- change this default

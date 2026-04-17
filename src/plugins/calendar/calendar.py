@@ -7,7 +7,7 @@ import requests
 from flask import current_app, render_template
 
 from plugins.baseplugin import BasePlugin
-from utils.render_utils import screenshot_html
+from utils.render_utils import screenshot_html, send_image
 
 
 class CalendarPlugin(BasePlugin):
@@ -28,8 +28,7 @@ class CalendarPlugin(BasePlugin):
                 "calendar/display/display.html", settings=plugin_settings, events=events
             )
             image = screenshot_html(str)
-            display_manager = current_app.config["Display_Manager"]
-            display_manager.update_display(image)
+            send_image(image)
 
     def _create_events(self, calendar_urls, calendar_colors, start, end):
         cleaned_events = []

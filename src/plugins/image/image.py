@@ -3,6 +3,7 @@ import random
 from PIL import Image
 
 from plugins.baseplugin import BasePlugin
+from utils.render_utils import send_image
 
 
 class ImagePlugin(BasePlugin):
@@ -24,5 +25,4 @@ class ImagePlugin(BasePlugin):
         image = Image.open(image_path).convert("RGBA")
 
         # Update the display with the PIL image
-        display_manager = app.config["Display_Manager"]
-        display_manager.update_display(image)
+        send_image(image)
