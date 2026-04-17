@@ -31,6 +31,6 @@ def send_image(img):
 
     socketio = current_app.config["socketio"]
 
-    socketio.emit("display_image", {
+    socketio.emit("update_display", {
         "data": encoded
     })
